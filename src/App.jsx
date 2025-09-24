@@ -1,14 +1,12 @@
-import './App.css'
-import Header from './Components/Header'
-import Notes from './Components/Notes'
+import NotesPage from "./pages/NotesPage";
+import './index.css'
 
 function App() {
-  return (
-    <div className='main'>
-      <Header />
-      <Notes />
-    </div>
-  )
+    return (
+        <div id="app">
+            <NotesPage />
+        </div>
+    );
 }
 
 export default App
