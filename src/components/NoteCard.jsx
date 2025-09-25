@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import { setNewOffset, autoGrow, setZIndex } from "../utils.js";
 import Trash from "../icons/Trash.jsx";
 
 const NoteCard = ({ note }) => {
@@ -12,6 +13,7 @@ const NoteCard = ({ note }) => {
     let mouseStartPos = useRef({ x: 0, y: 0 });
 
     const mouseDown = (e) => {
+        setZIndex(cardRef.current)
         mouseStartPos.current = { x: e.clientX, y: e.clientY };
         document.addEventListener("mousemove", mouseMove);
         document.addEventListener("mouseup", mouseUp);
@@ -25,27 +27,16 @@ const NoteCard = ({ note }) => {
     const mouseMove = (e) => {
         if (!cardRef.current) return;
 
-        // 1 - Calculate move direction
         const mouseMoveDir = {
             x: mouseStartPos.current.x - e.clientX,
             y: mouseStartPos.current.y - e.clientY,
         };
 
-        // 2 - Update start position for next move.
         mouseStartPos.current = { x: e.clientX, y: e.clientY };
 
-        // 3 - Update card top and left position
-        setPosition((prev) => ({
-            x: cardRef.current.offsetLeft - mouseMoveDir.x,
-            y: cardRef.current.offsetTop - mouseMoveDir.y,
-        }));
+        const newPosition = setNewOffset(cardRef.current, mouseMoveDir);
+        setPosition(newPosition);
     };
-
-    function autoGrow(ref) {
-        if (!ref.current) return;
-        ref.current.style.height = "auto";
-        ref.current.style.height = ref.current.scrollHeight + "px";
-    }
 
     useEffect(() => {
         autoGrow(textAreaRef);
@@ -75,6 +66,8 @@ const NoteCard = ({ note }) => {
                     defaultValue={body}
                     ref={textAreaRef}
                     onInput={() => autoGrow(textAreaRef)}
+                    onFocus={() => {setZIndex(cardRef.current);  
+                    }}
                 />
             </div>
         </div>
