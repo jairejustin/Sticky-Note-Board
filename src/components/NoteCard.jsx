@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState } from "react";
 import { setNewOffset, autoGrow, setZIndex } from "../utils.js";
-import { updateNote } from "../API/notes-local";
+import { updateNote, createNote, deleteNote } from "../API/notes-local";
 import Trash from "../icons/Trash.jsx";
 
-const NoteCard = ({ note }) => {
+const NoteCard = ({ note, onNoteDeleted }) => {
   const cardRef = useRef(null);
   const [position, setPosition] = useState(note.position);
   const [body, setBody] = useState(note.body);
@@ -11,36 +11,37 @@ const NoteCard = ({ note }) => {
   const [isDragging, setIsDragging] = useState(false);
   const colors = note.colors;
   const textAreaRef = useRef(null);
-  
+  const id = note.$id; // Use $id for consistency
+
   // Debounce timers
   const positionSaveTimer = useRef(null);
   const textSaveTimer = useRef(null);
-  
+
   // Simple drag state
   const dragState = useRef({
     isDragging: false,
     startX: 0,
     startY: 0,
     initialLeft: 0,
-    initialTop: 0
+    initialTop: 0,
   });
 
   // Auto-save function
   const saveNote = async (updates) => {
     try {
       setIsSaving(true);
-      
+
       const updatedNote = {
         ...note,
         body: body,
         position: position,
-        ...updates
+        ...updates,
       };
-      
+
       await updateNote(note.$id, updatedNote);
-      console.log('Note saved successfully');
+      console.log("Note saved successfully");
     } catch (error) {
-      console.error('Failed to save note:', error);
+      console.error("Failed to save note:", error);
     } finally {
       setIsSaving(false);
     }
@@ -51,7 +52,7 @@ const NoteCard = ({ note }) => {
     if (positionSaveTimer.current) {
       clearTimeout(positionSaveTimer.current);
     }
-    
+
     positionSaveTimer.current = setTimeout(() => {
       saveNote({ position: newPosition });
     }, 1000);
@@ -62,7 +63,7 @@ const NoteCard = ({ note }) => {
     if (textSaveTimer.current) {
       clearTimeout(textSaveTimer.current);
     }
-    
+
     textSaveTimer.current = setTimeout(() => {
       saveNote({ body: newText });
     }, 1000);
@@ -81,15 +82,15 @@ const NoteCard = ({ note }) => {
     const margin = 20;
     const cardWidth = 400;
     const cardHeight = 200;
-    
+
     // Get workspace size
-    const workspace = document.querySelector('.notes-container');
+    const workspace = document.querySelector(".notes-container");
     const maxX = workspace ? workspace.offsetWidth - cardWidth - margin : 3000;
     const maxY = workspace ? workspace.offsetHeight - cardHeight - margin : 2000;
-    
+
     return {
       x: Math.max(margin, Math.min(maxX, x)),
-      y: Math.max(margin, Math.min(maxY, y))
+      y: Math.max(margin, Math.min(maxY, y)),
     };
   };
 
@@ -97,8 +98,8 @@ const NoteCard = ({ note }) => {
   const handleMouseDown = (e) => {
     e.preventDefault();
     startDrag(e);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleMouseMove = (e) => {
@@ -108,17 +109,17 @@ const NoteCard = ({ note }) => {
 
   const handleMouseUp = (e) => {
     endDrag();
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
   };
 
   // Touch events - simplified
   const handleTouchStart = (e) => {
     // Don't prevent default immediately - let's see if touch works
     startDrag(e);
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd);
-    document.addEventListener('touchcancel', handleTouchEnd);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd);
+    document.addEventListener("touchcancel", handleTouchEnd);
   };
 
   const handleTouchMove = (e) => {
@@ -131,56 +132,66 @@ const NoteCard = ({ note }) => {
 
   const handleTouchEnd = (e) => {
     endDrag();
-    document.removeEventListener('touchmove', handleTouchMove);
-    document.removeEventListener('touchend', handleTouchEnd);
-    document.removeEventListener('touchcancel', handleTouchEnd);
+    document.removeEventListener("touchmove", handleTouchMove);
+    document.removeEventListener("touchend", handleTouchEnd);
+    document.removeEventListener("touchcancel", handleTouchEnd);
   };
 
   // Core drag functions
   const startDrag = (e) => {
     const coords = getCoords(e);
     const rect = cardRef.current.getBoundingClientRect();
-    
+
     dragState.current = {
       isDragging: true,
       startX: coords.x,
       startY: coords.y,
       initialLeft: rect.left,
-      initialTop: rect.top
+      initialTop: rect.top,
     };
-    
+
     setIsDragging(true);
     setZIndex(cardRef.current);
-    
+
     // Disable text selection
-    document.body.style.userSelect = 'none';
+    document.body.style.userSelect = "none";
   };
 
   const moveDrag = (e) => {
     if (!dragState.current.isDragging) return;
-    
+
     const coords = getCoords(e);
     const deltaX = coords.x - dragState.current.startX;
     const deltaY = coords.y - dragState.current.startY;
-    
+
     const newX = dragState.current.initialLeft + deltaX;
     const newY = dragState.current.initialTop + deltaY;
-    
+
     const constrainedPos = constrainPosition(newX, newY);
     setPosition(constrainedPos);
   };
 
   const endDrag = () => {
     if (!dragState.current.isDragging) return;
-    
+
     dragState.current.isDragging = false;
     setIsDragging(false);
-    
+
     // Re-enable text selection
-    document.body.style.userSelect = '';
-    
+    document.body.style.userSelect = "";
+
     // Save position
     savePositionAfterDelay(position);
+  };
+
+  // Delete handler
+  const handleDelete = async () => {
+    try {
+      await deleteNote(id);
+      if (onNoteDeleted) onNoteDeleted(id);
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+    }
   };
 
   // Handle text changes
@@ -196,16 +207,16 @@ const NoteCard = ({ note }) => {
       // Clear timers
       if (positionSaveTimer.current) clearTimeout(positionSaveTimer.current);
       if (textSaveTimer.current) clearTimeout(textSaveTimer.current);
-      
+
       // Cleanup any stuck states
-      document.body.style.userSelect = '';
-      
+      document.body.style.userSelect = "";
+
       // Remove any lingering listeners
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-      document.removeEventListener('touchcancel', handleTouchEnd);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+      document.removeEventListener("touchcancel", handleTouchEnd);
     };
   }, []);
 
@@ -216,7 +227,7 @@ const NoteCard = ({ note }) => {
   return (
     <div
       ref={cardRef}
-      className={`card ${isSaving ? 'saving' : ''} ${isDragging ? 'dragging' : ''}`}
+      className={`card ${isSaving ? "saving" : ""} ${isDragging ? "dragging" : ""}`}
       style={{
         backgroundColor: colors.colorBody,
         left: `${position.x}px`,
@@ -229,11 +240,18 @@ const NoteCard = ({ note }) => {
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
       >
-        <Trash />
+        <button
+          id="delete-button"
+          style={{ backgroundColor: colors.colorHeader, borderColor: colors.colorHeader }}
+          onClick={handleDelete}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
+          <Trash />
+        </button>
+
         {isSaving && (
-          <div className="save-indicator">
-            Saving...
-          </div>
+          <div className="save-indicator">Saving...</div>
         )}
       </div>
       <div className="card-body">

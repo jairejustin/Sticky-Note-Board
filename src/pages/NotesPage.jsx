@@ -3,6 +3,8 @@ import NoteCard from "../components/NoteCard";
 import AddNoteButton from "../components/AddNoteButton";
 import { fetchNotes, addDemoNotes } from "../API/notes-local";
 
+
+
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
