@@ -1,12 +1,25 @@
 # Sticky Note Board
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 
-A simple notes web application, but with sticky notes. Notes can be dragged across the board to change position. This project was originally inspired by [this tutorial](https://sticky-fcc.vercel.app/) with plans of incorporating my own features.
+[![My Skills](https://skillicons.dev/icons?i=react,css,html,javascript\&theme=dark)](https://skillicons.dev)
 
-## Clone:
+A simple **sticky notes web application** where you can create, edit, and drag notes across the board. This project is based on [Dennis Ivy’s tutorial](https://sticky-fcc.vercel.app/) with one key change: it can use **browser localStorage** instead of AppWrite for saving note.
+
+## Features
+
+* Create, edit, and delete notes.
+* Drag and drop notes to reposition them on the board.
+* Auto-save notes locally using LocalStorage.
+* Fully responsive and works on both desktop and mobile.
+
+## Installation
+
+Clone the repository and install dependencies:
+
 ```bash
 git clone https://github.com/njustinbunos/Sticky-Note-Board.git
 cd Sticky-Note-Board
 npm install
 npm run dev
 ```
+
+Then open `http://localhost:5173` (or the port shown in your terminal) in your browser to see the app.
