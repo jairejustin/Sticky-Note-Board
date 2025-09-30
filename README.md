@@ -2,7 +2,11 @@
 
 [![My Skills](https://skillicons.dev/icons?i=react,css,html,javascript\&theme=dark)](https://skillicons.dev)
 
-A simple **sticky notes web application** where you can create, edit, and drag notes across the board. This project is based on [Dennis Ivy’s tutorial](https://sticky-fcc.vercel.app/) with one key change: it can use **browser localStorage** instead of AppWrite for saving note.
+A simple **sticky notes web application** where you can create, edit, and drag notes across the board. This project is based on [Dennis Ivy’s tutorial](https://sticky-fcc.vercel.app/) with one key change: it can use **browser localStorage** instead of AppWrite for saving note. 
+
+## Deployment
+The application is live on Vercel: 
+https://sticky-notes-chi.vercel.app/
 
 ## Features
 
