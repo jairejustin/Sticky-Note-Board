@@ -4,6 +4,14 @@ import { createNote } from "../API/notes-local";
 
 const COLOR_PRESETS = [
   {
+    id: "red",
+    name: "Red",
+    colorHeader: "#FF0000",
+    colorBody: "#FFE5E0",
+    colorText: "#660000"
+  }
+  ,
+  {
     id: "yellow",
     name: "Yellow",
     colorHeader: "#FFD700",
