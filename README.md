@@ -1,6 +1,6 @@
 # Sticky Note Board
 
-[![My Skills](https://skillicons.dev/icons?i=react,css,html,javascript\&theme=dark)](https://skillicons.dev)
+[![TECH](https://skillicons.dev/icons?i=react,vite,css,html,javascript\&theme=dark)](https://skillicons.dev)
 
 A simple **sticky notes web application** where you can create, edit, delete, and drag notes across the board. This project is based on [Dennis Ivy’s tutorial](https://sticky-fcc.vercel.app/) with one change, it uses **browser localStorage** instead of AppWrite for saving notes. 
 
@@ -13,7 +13,7 @@ https://sticky-notes-chi.vercel.app/
 * Create, edit, and delete notes.
 * Drag and drop notes to reposition them on the board.
 * Auto-save notes locally using LocalStorage.
-* Fully responsive and works on both desktop and mobile.
+* Is responsive and works on both desktop and mobile (some bugs on mobile though).
 
 ## Installation
 
