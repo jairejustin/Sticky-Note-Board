@@ -20,7 +20,7 @@ https://sticky-notes-chi.vercel.app/
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/njustinbunos/Sticky-Note-Board.git
+git clone https://github.com/jairejustin/Sticky-Note-Board.git
 cd Sticky-Note-Board
 npm install
 npm run dev
