@@ -1,4 +1,3 @@
-// notes-local.js - LocalStorage implementation
 const STORAGE_KEY = 'sticky_notes';
 
 // Helper function to get all notes from localStorage
@@ -93,8 +92,6 @@ export async function deleteNote(id) {
   });
 }
 
-// ---- Transformations ----
-// Backend → Frontend (same as your API version)
 function transformFromBackend(backendNotes) {
   return backendNotes.map(note => ({
     $id: note.id,
