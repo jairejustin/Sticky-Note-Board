@@ -4,10 +4,6 @@
 
 A simple **sticky notes web application** where you can create, edit, delete, and drag notes across the board. This project is based on [Dennis Ivy’s tutorial](https://sticky-fcc.vercel.app/) with one change, it uses **browser localStorage** instead of AppWrite for saving notes. 
 
-## Deployment
-The application is live on Vercel: 
-https://sticky-notes-chi.vercel.app/
-
 ## Features
 
 * Create, edit, and delete notes.
